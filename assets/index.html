@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <title>QR-Code Generator</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        background-color: #0d1117;
+        color: #fefefe;
+        font-family: sans-serif;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        align-items: center;
+        background-color: #25292e;
+        color: #fefefe;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+        padding: 1rem;
+      }
+
+      .title,
+      .title-short {
+        color: #fefefe;
+        flex-grow: 1;
+        font-size: 1.5rem;
+        text-decoration: none;
+      }
+
+      .title:hover,
+      .title-short:hover {
+        text-decoration: underline;
+      }
+
+      .title-short {
+        display: none;
+      }
+
+      @media (max-width: 480px) {
+        .title {
+          display: none;
+        }
+        .title-short {
+          display: block;
+        }
+      }
+
+      .controls {
+        align-items: center;
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      button {
+        background-color: #0077cc;
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+        font-size: 1rem;
+        height: 2.75rem;
+        padding: 0 1rem;
+      }
+
+      button:hover {
+        background-color: #005fa3;
+      }
+
+      img {
+        align-self: center;
+        display: block;
+        height: auto;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 1rem;
+        max-height: calc(100vh - 15rem);
+        max-width: 100%;
+        object-fit: contain;
+        width: auto;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: 1rem;
+        overflow: hidden;
+        padding: 1rem;
+      }
+
+      select {
+        background-color: #fefefe;
+        border: 1px solid #fefefe;
+        border-radius: 4px;
+        font-size: 1rem;
+        height: 2.75rem;
+        padding: 0.5rem 1rem;
+      }
+
+      select:focus {
+        border-color: #005fa3;
+        outline: none;
+      }
+
+      textarea {
+        background-color: #fefefe;
+        border: 1px solid #fefefe;
+        border-radius: 4px;
+        color: #000;
+        font-family: monospace;
+        font-size: 1rem;
+        max-height: 40vh;
+        min-height: 9rem;
+        overflow-y: auto;
+        padding: 0.5rem 1rem;
+        resize: none;
+        width: 100%;
+      }
+
+      textarea:focus {
+        outline: none;
+      }
+
+      textarea::placeholder {
+        color: #888;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="/" class="title">QR-Code Generator</a>
+      <a href="/" class="title-short">QR-Gen</a>
+      <div class="controls">
+        <select
+          id="errorCorrection"
+          title="Error correction improves scan reliability by allowing recovery from damage or dirt. Higher levels increase QR code size."
+        >
+          <optgroup label="Error Correction">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+            <option value="highest">Highest</option>
+          </optgroup>
+        </select>
+        <button onclick="generateQR()">Generate</button>
+      </div>
+    </header>
+    <main>
+      <textarea
+        id="body"
+        placeholder="Sample contents:&#10;https://youtu.be/dQw4w9WgXcQ&#10;tel:+4923433881838&#10;WIFI:S:&lt;SSID&gt;;T:WPA;P:&lt;password&gt;;;&#10;mailto:example@example.com?subject=Subject&body=Text"
+        oninput="autoResize(this)"
+        autofocus
+      ></textarea>
+      <img id="qrcode" onclick="download();" style="cursor: pointer" />
+    </main>
+
+    <script>
+      function autoResize(e) {
+        e.style.height = "auto";
+        e.style.height = e.scrollHeight + "px";
+      }
+
+      function download() {
+        window.location.href = getDownloadURL();
+      }
+
+      function generateQR() {
+        const url = getImageURL();
+
+        if (!url) {
+          document.getElementById("qrcode").src = "";
+          return;
+        }
+
+        const img = document.getElementById("qrcode");
+        img.src = url;
+      }
+
+      function getDownloadURL() {
+        const body = document.getElementById("body").value.trim();
+        const errorCorrection =
+          document.getElementById("errorCorrection").value;
+
+        if (!body) {
+          return "";
+        }
+
+        const bodyEncoded = encodeURIComponent(body);
+        return `/download/${errorCorrection}/${bodyEncoded}`;
+      }
+
+      function getImageURL() {
+        const body = document.getElementById("body").value.trim();
+        const errorCorrection =
+          document.getElementById("errorCorrection").value;
+
+        if (!body) {
+          return "";
+        }
+
+        const bodyEncoded = encodeURIComponent(body);
+        return `/qr/${errorCorrection}/${bodyEncoded}`;
+      }
+    </script>
+  </body>
+</html>
