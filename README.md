@@ -18,5 +18,5 @@ MIT — do whatever you want. Attribution appreciated but not required.
 
 ## Take a look
 
-A live demo is available at [https://qr.0x0001f346.de/](qr.0x0001f346.de).
+A live demo is available at [qr.0x0001f346.de](https://qr.0x0001f346.de/).
 Please note that the version running there may be ahead of this repository.
